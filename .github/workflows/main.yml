@@ -1,0 +1,35 @@
+
+name: Build PocketChat OS
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install PlatformIO
+        run: pip install platformio
+
+      - name: Build firmware
+        run: pio run -e pocketchat_t_embed_cc1101
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: PocketChat-OS-ESP32-S3
+          path: .pio/build/pocketchat_t_embed_cc1101/firmware.bin
+          if-no-files-found: error
+          
